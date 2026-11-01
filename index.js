@@ -47,6 +47,18 @@ app.post('/events', async (req,res) =>{
     res.send(result);
 });
 
+app.patch('/events/:id', async (req,res) =>{
+    const id = req.params.id;
+    const updateData = req.body;
+    const filter = {_id: new ObjectId(id)};
+    const options = { upsert: true };
+    const updateDoc = {
+        $set: updateData,
+    };
+    const result = await events.updateOne(filter, updateDoc, options);
+    res.send(result);
+});
+
 app.listen(PORT, () =>{
     console.log(`Event Server is running on port:${PORT}`)
 });
