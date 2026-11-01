@@ -30,6 +30,11 @@ app.get('/',(req,res) =>{
     res.send("Welcome to the Event Server")
 })
 
+app.get('/events', async (req,res) =>{
+    const allEvents = await events.find({}).toArray();
+    res.send(allEvents);
+});
+
 app.post('/events', async (req,res) =>{
     const newData = req.body;
     const result = await events.insertOne(newData);
