@@ -41,6 +41,12 @@ app.get('/events/:id', async (req,res) =>{
     res.send(event);
 });
 
+app.get("/myevents/:userId", async (req, res) => {
+    const userId = req.params.userId;
+    const myEvents = await events.find({ organizerId: userId }).toArray();
+    res.send(myEvents);
+});
+
 app.post('/events', async (req,res) =>{
     const newData = req.body;
     const result = await events.insertOne(newData);
