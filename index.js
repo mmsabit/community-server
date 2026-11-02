@@ -100,7 +100,11 @@ app.delete('/event-joins/:id', async (req,res) =>{
     res.send(result);
 });
 
-
+app.get('/event-joins/:userId', async (req,res) =>{
+    const userId = req.params.userId;
+    const allEventJoins = await eventJoins.find({"joinerdata.joinerId": userId}).toArray();
+    res.send(allEventJoins);
+});
 
 app.listen(PORT, () =>{
     console.log(`Event Server is running on port:${PORT}`)
