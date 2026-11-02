@@ -25,6 +25,7 @@ export async function connectToMongoDB(){
 const connectedClient = await connectToMongoDB();
 const db = connectedClient.db('community');
 const events = db.collection('events') ;
+const eventJoins = db.collection('event-joins') ;
 
 app.get('/',(req,res) =>{
     res.send("Welcome to the Event Server")
@@ -69,6 +70,17 @@ app.delete('/events/:id', async (req,res) =>{
     const id = req.params.id;
     const query = {_id: new ObjectId(id)};
     const result = await events.deleteOne(query);
+    res.send(result);
+});
+
+app.get('/event-joins', async (req,res) =>{
+    const allEventJoins = await eventJoins.find({}).toArray();
+    res.send(allEventJoins);
+});
+
+app.post('/event-joins', async (req,res) =>{
+    const newData = req.body;
+    const result = await eventJoins.insertOne(newData);
     res.send(result);
 });
 
