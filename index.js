@@ -73,6 +73,9 @@ app.delete('/events/:id', async (req,res) =>{
     res.send(result);
 });
 
+
+// Event Joins API
+
 app.get('/event-joins', async (req,res) =>{
     const allEventJoins = await eventJoins.find({}).toArray();
     res.send(allEventJoins);
@@ -83,6 +86,21 @@ app.post('/event-joins', async (req,res) =>{
     const result = await eventJoins.insertOne(newData);
     res.send(result);
 });
+
+app.get('/event-joins/:userId/event/:eventId', async (req, res) => {
+    const { userId, eventId } = req.params;
+    const joinRecord = await eventJoins.findOne({ "joinerdata.joinerId": userId, "eventdata._id": eventId });
+    res.json(joinRecord);
+});
+
+app.delete('/event-joins/:id', async (req,res) =>{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)};
+    const result = await eventJoins.deleteOne(query);
+    res.send(result);
+});
+
+
 
 app.listen(PORT, () =>{
     console.log(`Event Server is running on port:${PORT}`)
