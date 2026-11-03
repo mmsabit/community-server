@@ -67,19 +67,19 @@ app.get('/events/:id', VerifyToken, async (req,res) =>{
     res.send(event);
 });
 
-app.get("/myevents/:userId", async (req, res) => {
+app.get("/myevents/:userId",VerifyToken, async (req, res) => {
     const userId = req.params.userId;
     const myEvents = await events.find({ organizerId: userId }).toArray();
     res.send(myEvents);
 });
 
-app.post('/events', async (req,res) =>{
+app.post('/events',VerifyToken, async (req,res) =>{
     const newData = req.body;
     const result = await events.insertOne(newData);
     res.send(result);
 });
 
-app.patch('/events/:id', async (req,res) =>{
+app.patch('/events/:id',VerifyToken, async (req,res) =>{
     const id = req.params.id;
     const updateData = req.body;
     const filter = {_id: new ObjectId(id)};
@@ -91,7 +91,7 @@ app.patch('/events/:id', async (req,res) =>{
     res.send(result);
 });
 
-app.delete('/events/:id', async (req,res) =>{
+app.delete('/events/:id',VerifyToken, async (req,res) =>{
     const id = req.params.id;
     const query = {_id: new ObjectId(id)};
     const result = await events.deleteOne(query);
@@ -101,31 +101,31 @@ app.delete('/events/:id', async (req,res) =>{
 
 // Event Joins API
 
-app.get('/event-joins', async (req,res) =>{
+app.get('/event-joins',VerifyToken, async (req,res) =>{
     const allEventJoins = await eventJoins.find({}).toArray();
     res.send(allEventJoins);
 });
 
-app.post('/event-joins', async (req,res) =>{
+app.post('/event-joins',VerifyToken, async (req,res) =>{
     const newData = req.body;
     const result = await eventJoins.insertOne(newData);
     res.send(result);
 });
 
-app.get('/event-joins/:userId/event/:eventId', async (req, res) => {
+app.get('/event-joins/:userId/event/:eventId',VerifyToken, async (req, res) => {
     const { userId, eventId } = req.params;
     const joinRecord = await eventJoins.findOne({ "joinerdata.joinerId": userId, "eventdata._id": eventId });
     res.json(joinRecord);
 });
 
-app.delete('/event-joins/:id', async (req,res) =>{
+app.delete('/event-joins/:id',VerifyToken, async (req,res) =>{
     const id = req.params.id;
     const query = {_id: new ObjectId(id)};
     const result = await eventJoins.deleteOne(query);
     res.send(result);
 });
 
-app.get('/event-joins/:userId', async (req,res) =>{
+app.get('/event-joins/:userId',VerifyToken, async (req,res) =>{
     const userId = req.params.userId;
     const allEventJoins = await eventJoins.find({"joinerdata.joinerId": userId}).toArray();
     res.send(allEventJoins);
