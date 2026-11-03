@@ -2,6 +2,7 @@ import express, { response } from "express";
 import cors from "cors"
 import 'dotenv/config'
 import { MongoClient, ObjectId } from "mongodb";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 
 const app = express();
 const PORT = process.env.PORT || 3200;
@@ -27,6 +28,30 @@ const db = connectedClient.db('community');
 const events = db.collection('events') ;
 const eventJoins = db.collection('event-joins') ;
 
+const VerifyToken = async (req,res,next) =>{
+    const authHeader = req.headers.authorization;
+    
+    if(!authHeader){
+        return res.status(401).send({message: "Unauthorized Access"})
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    if(!token){
+        return res.status(401).send({message: "Unauthorized Access"})
+    }
+
+    const jwks = createRemoteJWKSet(new URL(`http://localhost:3000/api/auth/jwks`));
+
+    try{
+        const { payload } = await jwtVerify(token, jwks);
+        next();
+    }
+    catch(err){
+        return res.status(500).send({message: "Internal Server Error"})
+    }
+}
+
 app.get('/',(req,res) =>{
     res.send("Welcome to the Event Server")
 })
@@ -36,7 +61,7 @@ app.get('/events', async (req,res) =>{
     res.send(allEvents);
 });
 
-app.get('/events/:id', async (req,res) =>{
+app.get('/events/:id', VerifyToken, async (req,res) =>{
     const id = req.params.id;
     const event = await events.findOne({_id: new ObjectId(id)});
     res.send(event);
