@@ -27,6 +27,7 @@ const connectedClient = await connectToMongoDB();
 const db = connectedClient.db('community');
 const events = db.collection('events') ;
 const eventJoins = db.collection('event-joins') ;
+const gallery = db.collection('gallery');
 
 const VerifyToken = async (req,res,next) =>{
     const authHeader = req.headers.authorization;
@@ -61,7 +62,12 @@ app.get('/events', async (req,res) =>{
     res.send(allEvents);
 });
 
-app.get('/events/:id', VerifyToken, async (req,res) =>{
+app.get('/gallery', async (req,res)=>{
+    const galleryall = await gallery.find({}).toArray();
+    res.send(galleryall);
+})
+
+app.get('/events/:id', async (req,res) =>{
     const id = req.params.id;
     const event = await events.findOne({_id: new ObjectId(id)});
     res.send(event);
