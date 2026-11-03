@@ -134,3 +134,5 @@ app.get('/event-joins/:userId',VerifyToken, async (req,res) =>{
 app.listen(PORT, () =>{
     console.log(`Event Server is running on port:${PORT}`)
 });
+
+export default app
